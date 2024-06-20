@@ -4,6 +4,7 @@ pipeline{
         stage ('build'){
             steps{
                 echo "Hi, Here building happens"
+                echo "This is for testing autocommit feature"
             }
             
         }
