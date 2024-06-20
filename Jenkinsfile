@@ -1,5 +1,10 @@
 pipeline{
     agent any
+
+    environment{
+        server_credentials = credentials('test-credentials')
+    }
+    
     stages {
         stage ('build'){
             steps{
@@ -15,6 +20,7 @@ pipeline{
         }
         stage ('deploy'){
             steps{
+                echo "here are my credentials ${server_credentials}"
                 echo "Hi, Here deployment happens"
             }
         }
