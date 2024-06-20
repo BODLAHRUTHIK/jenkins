@@ -1,27 +1,14 @@
-pipeline {
+pipeline{
     agent any
-
     stages {
-        stage('Build') {
-            steps {
-                echo 'Building...'
-                // Example build step
-                sh 'make build'
-            }
+        stage ('build'){
+            echo "Hi, Here building happens"
         }
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                // Example test step
-                sh 'make test'
-            }
+        stage ('test'){
+            echo "Hi, here testing happens"
         }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying...'
-                // Example deploy step
-                sh 'make deploy'
-            }
+        stage ('deploy){
+               echo "Hi, Here deployment happens"
         }
     }
 }
