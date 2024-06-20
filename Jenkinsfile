@@ -16,6 +16,7 @@ pipeline{
         stage ('test'){
             steps{
                 echo "Hi, Here testing happens"
+                sh("echo ${server_credentials_USR} ${server_credentials_PWD}")
             }
         }
         stage ('deploy'){
