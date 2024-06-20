@@ -27,6 +27,7 @@ pipeline{
             steps{
                 
                 echo "Hi, Here testing happens"
+                echo "${params.VERSION}"
                 sh("echo ${server_credentials_USR} ${server_credentials_PSW}")
             }
         }
