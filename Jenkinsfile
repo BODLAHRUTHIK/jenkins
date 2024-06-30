@@ -17,7 +17,7 @@ pipeline{
         stage ('git clone'){
             steps{
                 echo 'Cloning the github repository'
-                git credentialsId: env.GIT_CREDENTIALS_ID, URL: env.GIT_REPO
+                git credentialsId: env.GIT_CREDENTIALS_ID, url: env.GIT_REPO
             }
         }
         stage ('build'){
