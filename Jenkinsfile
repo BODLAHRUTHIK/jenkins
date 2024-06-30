@@ -6,6 +6,9 @@ pipeline {
         booleanParam(name: "executeTests", defaultValue: true, description: "Choose to test")
     }
 
+    tools{
+        dockerTool 'docker'
+    }
     environment {
         GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git' // Correct repository URL
         GIT_CREDENTIALS_ID = 'github-credentials' // Correct GitHub credentials ID
