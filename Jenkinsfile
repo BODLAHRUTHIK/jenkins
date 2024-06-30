@@ -21,17 +21,17 @@ pipeline {
     }
 
     stages {
+        stage('Download AWS CLI') {
+            steps {
+                sh 'wget https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip -O awscliv2.zip'
+                sh 'unzip -q awscliv2.zip'
+                sh './aws/install'
+            }
+        }
         stage('Install Tools') {
             steps {
                 script {
-                    // Install AWS CLI
-                    if (!commandExists('aws')) {
-                        sh '''
-                        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                        unzip -q awscliv2.zip
-                        ./aws/install -i $HOME/.local/aws-cli -b $HOME/.local/bin
-                        '''
-                    }
+
 
                     // Install kubectl
                     if (!commandExists('kubectl')) {
