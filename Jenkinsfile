@@ -6,16 +6,22 @@ pipeline {
         booleanParam(name: "executeTests", defaultValue: true, description: "Choose to test")
     }
 
-    tools{
+    tools {
         dockerTool 'docker'
     }
+
     environment {
-        GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git' // Correct repository URL
-        GIT_CREDENTIALS_ID = 'github-credentials' // Correct GitHub credentials ID
+        GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git'
+        GIT_CREDENTIALS_ID = 'github-credentials'
         DOCKER_REPO = 'hruthikbodla/myprojects'
-        DOCKER_CREDENTIALS_ID = 'dockerhub-creds' // Correct Docker Hub credentials ID
-        GIT_BRANCH = 'main' // Specify the branch to build
+        DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
+        GIT_BRANCH = 'main'
         REPO_DIR = "${WORKSPACE}"
+        AWS_REGION = 'ap-south-1'
+        EKS_CLUSTER_NAME = 'eks-cluster'
+        HELM_REPO_URL = 'your-helm-repo-url'
+        HELM_CHART_NAME = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
+        AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
     }
 
     stages {
@@ -38,9 +44,8 @@ pipeline {
                 script {
                     // Build the Docker image
                     dir("${REPO_DIR}/hello-world-app/project-flask") {
-                    sh "docker build -t ${DOCKER_REPO}:${params.VERSION} ."
-                }
-                        
+                        sh "docker build -t ${DOCKER_REPO}:${params.VERSION} ."
+                    }
 
                     withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
@@ -50,6 +55,7 @@ pipeline {
                 }
             }
         }
+
         stage('test') {
             when {
                 expression {
@@ -61,9 +67,34 @@ pipeline {
                 echo "Selected version: ${params.VERSION}"
             }
         }
+
         stage('deploy') {
             steps {
-                echo "Deploying the application"
+                script {
+                    echo "Deploying the application"
+
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: 'aws-credentials'
+                    ]]) {
+                        // Configure AWS CLI and kubectl to use the EKS cluster
+                        sh """
+                        aws eks --region ${AWS_REGION} update-kubeconfig --name ${EKS_CLUSTER_NAME}
+                        kubectl config use-context arn:aws:eks:${AWS_REGION}:${AWS_ACCOUNT_ID}:cluster/${EKS_CLUSTER_NAME}
+                        """
+
+                        // Add Helm repo and update
+                        sh """
+                        helm repo add my-repo ${HELM_REPO_URL}
+                        helm repo update
+                        """
+
+                        // Deploy the Helm chart
+                        sh """
+                        helm upgrade --install ${HELM_CHART_NAME} my-repo/${HELM_CHART_NAME} --set image.repository=${DOCKER_REPO} --set image.tag=${params.VERSION}
+                        """
+                    }
+                }
             }
         }
     }
