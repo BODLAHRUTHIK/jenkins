@@ -11,13 +11,20 @@ pipeline{
         GIT_CREDENTIALS_ID = 'github-creds-2'
         DOCKER_REPO = 'hruthikbodla/myprojects'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
+        GIT_BRANCH = 'main'
     }
 
     stages {
-        stage ('git clone'){
-            steps{
-                echo 'Cloning the github repository'
-                git credentialsId: env.GIT_CREDENTIALS_ID, url: env.GIT_REPO
+        stage ('git clone') {
+            steps {
+                echo 'Cloning the GitHub repository'
+                checkout([$class: 'GitSCM',
+                          branches: [[name: "*/${env.GIT_BRANCH}"]],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions: [],
+                          submoduleCfg: [],
+                          userRemoteConfigs: [[url: env.GIT_REPO, credentialsId: env.GIT_CREDENTIALS_ID]]
+                ])
             }
         }
         stage ('build'){
