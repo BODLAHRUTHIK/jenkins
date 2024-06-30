@@ -5,12 +5,26 @@ pipeline{
         choice(name:"VERSION", choices: ["1.1.1", "1.2.1", "1.3.1"], description:"version to choose")
         booleanParam(name:"executeTests", defaultValue: true, description:"choose to test")
     }
-    
+
+    environment {
+        GIT_REPO = 'https://github.com/BODLAHRUTHIK/jenkins.git'
+        GIT_CREDENTIALS_ID = credentials('')
+    }
+    stages {
+        stage ('git clone'){
+            steps{
+                echo 'Cloning the github repository'
+                
+            }
+        }
+            
+    }
     stages {
         stage ('build'){
             steps{
-                echo "Hi, Here building happens"
-                echo "This is for testing autocommit feature"
+                echo "Building docker image here"
+                sh 'docker build -t '
+               
             }
             
         }
