@@ -22,7 +22,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 echo 'Cloning the GitHub repository'
-                sh "git clone https://github.com/BODLAHRUTHIK/hello-world-app.git my-app_main/hello-world-app"
+                sh "git clone https://github.com/BODLAHRUTHIK/hello-world-app.git hello-world-app"
             }
         }
 
