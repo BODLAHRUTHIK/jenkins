@@ -28,12 +28,16 @@ pipeline {
         stage('Install Tools') {
             steps {
                 sh '''
+                # Define paths
+                export PATH=$HOME/.local/bin:$PATH
+                mkdir -p $HOME/.local/bin
+
                 # Install AWS CLI
                 if ! command -v aws &> /dev/null
                 then
                     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
                     unzip awscliv2.zip
-                    sudo ./aws/install
+                    ./aws/install -i $HOME/.local/aws-cli -b $HOME/.local/bin
                 fi
 
                 # Install kubectl
@@ -41,18 +45,18 @@ pipeline {
                 then
                     curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
                     chmod +x ./kubectl
-                    sudo mv ./kubectl /usr/local/bin/kubectl
+                    mv ./kubectl $HOME/.local/bin/kubectl
                 fi
 
                 # Install Helm
                 if ! command -v helm &> /dev/null
                 then
-                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                    curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash -s -- --version v3.5.0
+                    mv /usr/local/bin/helm $HOME/.local/bin/helm
                 fi
                 '''
             }
         }
-
 
         stage('git clone') {
             steps {
