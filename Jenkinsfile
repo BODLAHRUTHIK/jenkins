@@ -7,7 +7,7 @@ pipeline{
     }
 
     environment {
-        GIT_REPO = 'https://github.com/BODLAHRUTHIK/jenkins.git'
+        GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git'
         GIT_CREDENTIALS_ID = 'github-creds-2'
         DOCKER_REPO = 'hruthikbodla/myprojects'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
