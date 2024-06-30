@@ -1,10 +1,6 @@
 pipeline{
     agent any
 
-    environment{
-        server_credentials = credentials('test-credentials')
-    }
-
     parameters{
         choice(name:"VERSION", choices: ["1.1.1", "1.2.1", "1.3.1"], description:"version to choose")
         booleanParam(name:"executeTests", defaultValue: true, description:"choose to test")
@@ -28,12 +24,11 @@ pipeline{
                 
                 echo "Hi, Here testing happens"
                 echo "${params.VERSION}"
-                sh("echo ${server_credentials_USR} ${server_credentials_PSW}")
+
             }
         }
         stage ('deploy'){
             steps{
-                echo "here are my credentials ${server_credentials}"
                 echo "Hi, Here deployment happens"
             }
         }
