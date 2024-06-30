@@ -25,7 +25,40 @@ pipeline {
     }
 
     stages {
-        
+
+        stage('Install Tools') {
+            steps {
+                script {
+                    // Install AWS CLI
+                    if (!fileExists("$HOME/.local/aws-cli/aws")) {
+                        sh '''
+                        mkdir -p $HOME/.local/aws-cli
+                        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+                        unzip -q awscliv2.zip -d $HOME/.local/aws-cli
+                        $HOME/.local/aws-cli/aws/install -i $HOME/.local/aws-cli -b $HOME/.local/bin
+                        '''
+                    }
+
+                    // Install kubectl
+                    if (!commandExists('kubectl')) {
+                        sh '''
+                        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        mv kubectl $HOME/.local/bin/kubectl
+                        '''
+                    }
+
+                    // Install Helm
+                    if (!commandExists('helm')) {
+                        sh '''
+                        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+                        mv /usr/local/bin/helm $HOME/.local/bin/helm
+                        '''
+                    }
+                }
+            }
+        }
+
 
         stage('git clone') {
             steps {
@@ -100,4 +133,14 @@ pipeline {
             }
         }
     }
+}
+
+
+
+def fileExists(String path) {
+    return file(path).exists()
+}
+
+def commandExists(String command) {
+    return sh(script: "command -v $command", returnStatus: true) == 0
 }
