@@ -12,6 +12,7 @@ pipeline{
         DOCKER_REPO = 'hruthikbodla/myprojects'
         DOCKER_CREDENTIALS_ID = credentials('dockerhub-creds')
     }
+
     stages {
         stage ('git clone'){
             steps{
@@ -19,9 +20,6 @@ pipeline{
                 git credentialsId: env.GIT_CREDENTIALS_ID, URL: env.GIT_REPO
             }
         }
-            
-    }
-    stages {
         stage ('build'){
             steps{
                 echo "Building docker image here"
