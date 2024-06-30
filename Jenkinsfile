@@ -18,7 +18,7 @@ pipeline {
         HELM_REPO_URL = 'your-helm-repo-url'
         HELM_CHART_NAME = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
-        PATH = "/var/jenkins_home/bin:$PATH"
+        
     }
 
     stages {
@@ -60,6 +60,7 @@ pipeline {
         stage('Download and Install Helm') {
             steps {
                 script {
+                    PATH = "/var/jenkins_home/bin:$PATH"
                     sh 'curl -LO https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz'
                     sh 'tar -zxvf helm-v3.15.2-linux-amd64.tar.gz'
                     sh 'mv linux-amd64/helm ~/bin/helm'  // Assuming ~/bin is in PATH
