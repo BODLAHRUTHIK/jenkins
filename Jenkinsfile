@@ -18,6 +18,7 @@ pipeline {
         HELM_REPO_URL = 'your-helm-repo-url'
         HELM_CHART_NAME = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
+        PATH = "/var/jenkins_home/bin:$PATH"
     }
 
     stages {
