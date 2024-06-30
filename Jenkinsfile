@@ -8,13 +8,15 @@ pipeline{
 
     environment {
         GIT_REPO = 'https://github.com/BODLAHRUTHIK/jenkins.git'
-        GIT_CREDENTIALS_ID = credentials('')
+        GIT_CREDENTIALS_ID = credentials('github-credentials')
+        DOCKER_REPO = 'hruthikbodla/myprojects'
+        DOCKER_CREDENTIALS_ID = credentials('dockerhub-creds')
     }
     stages {
         stage ('git clone'){
             steps{
                 echo 'Cloning the github repository'
-                
+                git credentialsId: env.GIT_CREDENTIALS_ID URL: env.GIT_REPO
             }
         }
             
@@ -23,8 +25,11 @@ pipeline{
         stage ('build'){
             steps{
                 echo "Building docker image here"
-                sh 'docker build -t '
-               
+                sh 'docker build -t ${DOCKER_REPO}:${params.VERSION} .'
+                withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]){
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
+                }
+                sh 'docker push ${DOCKER_REPO}:${params.VERSION}'
             }
             
         }
