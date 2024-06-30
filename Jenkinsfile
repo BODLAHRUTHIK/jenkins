@@ -117,7 +117,7 @@ pipeline {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, credentials: 'aws-creds') {
+                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         sh "helm repo add my-helm-repo ${HELM_CHART_REPO}"
                         sh "helm upgrade --install my-app my-helm-repo/my-chart --namespace my-namespace --set image.tag=${params.VERSION}"
                     }
