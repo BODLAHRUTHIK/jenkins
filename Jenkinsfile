@@ -19,10 +19,16 @@ pipeline {
     }
 
     stages {
-        stage('Clone Repository') {
+        stage('git clone') {
             steps {
                 echo 'Cloning the GitHub repository'
-                sh "git clone https://github.com/BODLAHRUTHIK/hello-world-app.git hello-world-app"
+                checkout([$class: 'GitSCM',
+                          branches: [[name: "*/${env.GIT_BRANCH}"]],
+                          doGenerateSubmoduleConfigurations: false,
+                          extensions: [],
+                          submoduleCfg: [],
+                          userRemoteConfigs: [[url: env.GIT_REPO, credentialsId: env.GIT_CREDENTIALS_ID]]
+                ])
             }
         }
 
