@@ -21,19 +21,21 @@ pipeline {
     }
 
     stages {
-        stage('Download and Install AWS CLI') {
+        stage('Install AWS CLI') {
             steps {
-                sh 'curl -o awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip'
-                sh 'unzip -qo awscliv2.zip'
-                sh './aws/install -i ~/aws-cli -b ~/bin'
+                script {
+                    // Download AWS CLI installation script
+                    sh 'curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"'
+                    sh 'unzip -qo awscliv2.zip'
+                    // Install AWS CLI to specified directory
+                    sh './aws/install -i /var/jenkins_home/aws-cli -b /var/jenkins_home/bin --update'
+                    // Verify AWS CLI installation
+                    sh '/var/jenkins_home/aws-cli/v2/current/bin/aws --version'
+                }
             }
         }
 
-        stage('Verify AWS CLI Installation') {
-            steps {
-                sh '~/bin/aws --version'
-            }
-        }
+
         stage('Install Tools') {
             steps {
                 script {
