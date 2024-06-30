@@ -49,12 +49,18 @@ pipeline {
                     }
 
                     // Install Helm
-                    if (!commandExists('helm')) {
-                        sh '''
-                        curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
-                        mv /usr/local/bin/helm $HOME/.local/bin/helm
-                        '''
-                    }
+                  
+                }
+            }
+        }
+
+        stage('Download and Install Helm') {
+            steps {
+                script {
+                    sh 'curl -LO https://get.helm.sh/helm-v3.15.2-linux-amd64.tar.gz'
+                    sh 'tar -zxvf helm-v3.15.2-linux-amd64.tar.gz'
+                    sh 'mv linux-amd64/helm ~/bin/helm'  // Assuming ~/bin is in PATH
+                    sh 'helm version'  // Verify installation
                 }
             }
         }
