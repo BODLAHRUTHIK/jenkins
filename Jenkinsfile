@@ -8,9 +8,9 @@ pipeline{
 
     environment {
         GIT_REPO = 'https://github.com/BODLAHRUTHIK/jenkins.git'
-        GIT_CREDENTIALS_ID = credentials('github-credentials')
+        GIT_CREDENTIALS_ID = 'github-credentials'
         DOCKER_REPO = 'hruthikbodla/myprojects'
-        DOCKER_CREDENTIALS_ID = credentials('dockerhub-creds')
+        DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
     }
 
     stages {
