@@ -33,15 +33,18 @@ pipeline {
                 script {
                     // Build the Docker image
                     sh '''
+                        #!/bin/bash
                         docker build -t ${DOCKER_REPO}:${params.VERSION} .
                     '''
                     withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh '''
+                            #!/bin/bash
                             echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
                         '''
                     }
                     // Push the Docker image to Docker Hub
                     sh '''
+                        #!/bin/bash
                         docker push ${DOCKER_REPO}:${params.VERSION}
                     '''
                 }
