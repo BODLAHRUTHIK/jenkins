@@ -15,6 +15,7 @@ pipeline {
         DOCKER_REPO = 'hruthikbodla/myprojects'
         DOCKER_CREDENTIALS_ID = 'dockerhub-creds' // Correct Docker Hub credentials ID
         GIT_BRANCH = 'main' // Specify the branch to build
+        REPO_DIR = "${WORKSPACE}/my-app_main"
     }
 
     stages {
@@ -35,7 +36,9 @@ pipeline {
                 echo "Building Docker image here"
                 script {
                     // Build the Docker image
+                    dir("${REPO_DIR}/project-flask") {
                     sh "docker build -t ${DOCKER_REPO}:${params.VERSION} ."
+                }
                         
 
                     withCredentials([usernamePassword(credentialsId: env.DOCKER_CREDENTIALS_ID, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
