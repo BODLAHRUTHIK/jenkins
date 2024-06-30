@@ -17,8 +17,7 @@ pipeline {
         REPO_DIR = "${WORKSPACE}"
         AWS_REGION = 'ap-south-1'
         EKS_CLUSTER_NAME = 'eks-cluster'
-        HELM_REPO_URL = 'your-helm-repo-url'
-        HELM_CHART_NAME = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
+        HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
         PATH = "/var/jenkins_home/bin:$PATH"
         
@@ -119,7 +118,7 @@ pipeline {
                 script {
                     withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         sh "helm repo add my-helm-repo ${HELM_CHART_REPO}"
-                        sh "helm upgrade --install my-app my-helm-repo/my-chart --namespace my-namespace --set image.tag=${params.VERSION}"
+                        sh "helm upgrade --install my-app my-helm-repo/new-chart --namespace my-namespace --set image.tag=${params.VERSION}"
                     }
                 }
             }
