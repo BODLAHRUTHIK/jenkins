@@ -21,7 +21,7 @@ pipeline {
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
         AWS_ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'
         AWS_ROLE_SESSION_NAME = 'JenkinsSession'
-        PATH = "$HOME/.local/bin:$PATH"
+        PATH = "/var/jenkins_home/bin:$PATH"
     }
 
     stages {
