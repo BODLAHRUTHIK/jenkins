@@ -129,7 +129,8 @@ pipeline {
                         // Print AWS CLI version to ensure it's installed correctly
 
                         echo "Its inside"
-                        sh 'echo aws --version'
+                        sh 'aws --version'
+                        sh 'aws sts get-caller-identity'
 
 
                         // Update kubeconfig for the EKS cluster
