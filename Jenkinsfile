@@ -130,7 +130,8 @@ pipeline {
                         // Print AWS CLI version to ensure it's installed correctly
                         echo "Its inside"
                         sh 'aws --version'
-                        sh 'cat ~/.aws/credentials'
+                        sh 'env | grep AWS'
+
                         retry(2) {
                             sh 'aws sts get-caller-identity'
                         }
