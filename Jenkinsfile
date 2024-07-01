@@ -132,13 +132,15 @@ pipeline {
 
         stage('Fetch Kubeconfig') {
             steps {
-                script {
-                    def result = sh(
-                        script: "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --debug",
-                        returnStatus: true
-                    )
-                    if (result != 0) {
-                        error "Failed to update kubeconfig. Exit code: ${result}"
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                    script {
+                        def result = sh(
+                            script: "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --debug",
+                            returnStatus: true
+                        )
+                        if (result != 0) {
+                            error "Failed to update kubeconfig. Exit code: ${result}"
+                        }
                     }
                 }
             }
