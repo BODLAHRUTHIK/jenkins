@@ -7,6 +7,10 @@ pipeline {
     }
     tools {
         dockerTool 'docker'
+        kubernetesCli {
+            // Install kubectl from official Kubernetes releases or package manager
+            install 'kubectl'
+        }
     }
     environment {
         GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git'
