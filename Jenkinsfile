@@ -160,7 +160,6 @@ pipeline {
             }
         }
         // Add additional stages as needed
-    }
         stage('Deploy') {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
