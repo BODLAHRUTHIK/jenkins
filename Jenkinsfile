@@ -140,7 +140,10 @@ pipeline {
                     sh 'cat /var/jenkins_home/.kube/config'
                     sh 'aws sts get-caller-identity'
                     sh "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
-                    sh 'kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config'
+                    sh '''
+                            token=$(aws eks get-token --cluster-name ${CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
+                            kubectl --kubeconfig=${KUBECONFIG_PATH} get pods --all-namespaces --token=$token
+                       '''
                 }
             }
         }
