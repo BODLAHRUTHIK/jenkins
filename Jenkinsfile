@@ -126,7 +126,17 @@ pipeline {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
                     withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
-                        sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                        // If using IAM role support
+                        withIAMRole(role: 'arn:aws:iam::874789631010:role/cluster-access-2', duration: 3600) {
+                            // Print AWS CLI version to ensure it's installed correctly
+                            sh 'aws --version'
+
+                            // Check if the EKS cluster exists and print its details
+                            sh "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+
+                            // Update kubeconfig for the EKS cluster
+                            sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                        }
                     }
                 }
             }
