@@ -133,15 +133,9 @@ pipeline {
         stage('Fetch Kubeconfig') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-                    script {
-                        def result = sh(
-                            script: "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --debug",
-                            returnStatus: true
-                        )
-                        if (result != 0) {
-                            error "Failed to update kubeconfig. Exit code: ${result}"
-                        }
-                    }
+                    sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                    sh 'kubectl config get-contexts'
+                    sh 'cat /var/jenkins_home/.kube/config'
                 }
             }
         }
