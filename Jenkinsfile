@@ -22,6 +22,7 @@ pipeline {
         PATH = "/var/jenkins_home/bin:$PATH"
         AWS_ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'
         AWS_ROLE_SESSION_NAME = 'JenkinsSession'
+        PATH = "$HOME/.local/bin:$PATH"
     }
 
     stages {
@@ -43,23 +44,21 @@ pipeline {
         stage('Install Tools') {
             steps {
                 script {
-
-
-                    // Install kubectl
+                    // Install kubectl if not already installed
                     if (!commandExists('kubectl')) {
                         sh '''
                         curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
                         chmod +x kubectl
                         mv kubectl $HOME/.local/bin/kubectl
                         '''
-                        sh 'kubectl version --client'
+                        sh 'kubectl version --client' // Verify installation
                     }
 
-                    // Install Helm
-                  
+                    // Proceed with other tool installations like Helm
                 }
             }
         }
+
 
         stage('Download and Install Helm') {
             steps {
