@@ -19,7 +19,6 @@ pipeline {
         EKS_CLUSTER_NAME = 'eks-cluster'
         HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
-        PATH = "/var/jenkins_home/bin:$PATH"
         AWS_ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'
         AWS_ROLE_SESSION_NAME = 'JenkinsSession'
         PATH = "$HOME/.local/bin:$PATH"
