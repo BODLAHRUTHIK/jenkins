@@ -20,6 +20,8 @@ pipeline {
         HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
         PATH = "/var/jenkins_home/bin:$PATH"
+        ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'  // Replace with your role ARN
+        SESSION_NAME = 'JenkinsSession'
         
     }
 
@@ -125,28 +127,40 @@ pipeline {
         stage('Configure Kubernetes') {
             steps {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
-                
-                sh 'unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN'
                 script {
-                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
-                        // Print AWS CLI version to ensure it's installed correctly
-                        echo "Its inside"
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                        // Unset potentially conflicting environment variables
+                        sh 'unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN'
+
+                        // Assume the IAM role
+                        def assumeRole = sh(script: """
+                            aws sts assume-role --role-arn ${ROLE_ARN} --role-session-name ${SESSION_NAME}
+                        """, returnStdout: true).trim()
                         
+                        def json = readJSON text: assumeRole
+                        env.AWS_ACCESS_KEY_ID = json.Credentials.AccessKeyId
+                        env.AWS_SECRET_ACCESS_KEY = json.Credentials.SecretAccessKey
+                        env.AWS_SESSION_TOKEN = json.Credentials.SessionToken
+
+                        echo "Verifying AWS CLI installation..."
                         sh 'aws --version'
+                        
+                        // Adding environment variables to debug
                         sh 'env | grep AWS'
 
                         retry(2) {
+                            echo "Fetching AWS caller identity..."
                             sh 'aws sts get-caller-identity'
                         }
                         
-
-
-                        // Update kubeconfig for the EKS cluster
+                        echo "Updating kubeconfig for the EKS cluster..."
                         sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     }
                 }
             }
         }
+        // Add additional stages as needed
+    }
         stage('Deploy') {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
