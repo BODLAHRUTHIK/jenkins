@@ -121,21 +121,7 @@ pipeline {
                 }
             }
         }
-        stage('Configure AWS CLI') {
-            steps {
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', 
-                                  credentialsId: 'aws-credentials', 
-                                  usernameVariable: 'AWS_ACCESS_KEY_ID', 
-                                  passwordVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-                    sh """
-                    aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-                    aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-                    aws configure set region $AWS_REGION
-                    """
-                    sh "echo its done"
-                }
-            }
-        }
+ 
         stage('Configure Kubernetes') {
             steps {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
@@ -144,6 +130,7 @@ pipeline {
                         // Print AWS CLI version to ensure it's installed correctly
                         echo "Its inside"
                         sh 'aws --version'
+                        sh 'cat ~/.aws/credentials'
                         retry(2) {
                             sh 'aws sts get-caller-identity'
                         }
