@@ -17,7 +17,7 @@ pipeline {
         REPO_DIR = "${WORKSPACE}"
         AWS_REGION = 'ap-south-1'
         EKS_CLUSTER_NAME = 'eks-cluster'
-        HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm/tree/main/new-chart'
+        HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
         PATH = "/var/jenkins_home/bin:$PATH"
         
