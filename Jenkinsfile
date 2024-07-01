@@ -139,6 +139,7 @@ pipeline {
                     
                     sh 'cat /var/jenkins_home/.kube/config'
                     sh 'aws sts get-caller-identity'
+                    sh 'aws eks get-token'
                     sh 'kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config'
                 }
             }
