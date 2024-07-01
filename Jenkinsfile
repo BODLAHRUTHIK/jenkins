@@ -126,6 +126,7 @@ pipeline {
         stage('Configure AWS Credentials') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+                    sh 'aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}'
                     sh 'aws configure list'  // Verify AWS CLI configuration
                 }
             }
