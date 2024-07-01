@@ -136,7 +136,9 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
+                    sh 'kubectl get pods -A'
                     sh 'cat /var/jenkins_home/.kube/config'
+                    sh 'aws sts get-caller-identity'
                 }
             }
         }
@@ -145,9 +147,8 @@ pipeline {
         
         stage('Deploy') {
             steps {
-                echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
+                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                         dir('my-flask-helm/new-chart') {
                             sh "helm dependency update"
                             sh "helm upgrade --install my-app . --namespace apps --set image.tag=${params.VERSION}"
@@ -155,6 +156,7 @@ pipeline {
                     }
                 }
             }
+           
         }
     }
 }
