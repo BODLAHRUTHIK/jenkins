@@ -141,7 +141,7 @@ pipeline {
                     sh 'aws sts get-caller-identity'
                     sh "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh '''
-                            token=$(aws eks get-token --cluster-name ${CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
+                            token=$(aws eks get-token --cluster-name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
                             kubectl --kubeconfig=${KUBECONFIG_PATH} get pods --all-namespaces --token=$token
                        '''
                 }
