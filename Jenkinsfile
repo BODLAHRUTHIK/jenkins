@@ -138,6 +138,7 @@ pipeline {
                     sh 'kubectl config get-contexts'
                     
                     sh 'cat /var/jenkins_home/.kube/config'
+                    sh 'chmod 666 /var/jenkins_home/.kube/config'
                     sh 'aws sts get-caller-identity'
                     sh "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh '''
