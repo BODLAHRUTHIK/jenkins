@@ -121,7 +121,16 @@ pipeline {
                 }
             }
         }
-
+        stage('Configure Kubernetes') {
+            steps {
+                echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
+                script {
+                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
+                        sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                    }
+                }
+            }
+        }
         stage('Deploy') {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
