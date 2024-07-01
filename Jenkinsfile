@@ -123,13 +123,14 @@ pipeline {
             }
         }
 
-        stage('Assume Role') {
+        stage('Configure AWS Credentials') {
             steps {
-                withAWS(role: AWS_ROLE_ARN, roleSessionName: AWS_ROLE_SESSION_NAME, duration: 900) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh 'aws configure list'  // Verify AWS CLI configuration
                 }
             }
         }
+
         
         stage('Deploy') {
             steps {
