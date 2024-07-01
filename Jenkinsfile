@@ -123,7 +123,16 @@ pipeline {
                 }
             }
         }
-
+        stage('Configure AWS Credentials') {
+            steps {
+                withCredentials([awsAccessKeyId(credentialsId: 'aws-credentials', variable: 'AWS_ACCESS_KEY_ID'),
+                                 awsSecretAccessKey(credentialsId: 'aws-credentials', variable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
+                    sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+                    sh 'aws configure list'  // Verify AWS CLI configuration
+                }
+            }
+        }
         stage('Configure Kubernetes') {
                 steps {
                     echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
