@@ -112,13 +112,25 @@ pipeline {
             }
         }
 
+        stage('Clone Helm Chart Repository') {
+            steps {
+                echo 'Cloning Helm chart repository...'
+                script {
+                    sh 'rm -rf my-flask-helm' // Clean up any previous clone
+                    sh "git clone ${HELM_CHART_REPO_URL}"
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
                     withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
-                        sh "helm repo add my-helm-repo ${HELM_CHART_REPO}"
-                        sh "helm upgrade --install my-app my-helm-repo/new-chart --namespace my-namespace --set image.tag=${params.VERSION}"
+                        dir('my-flask-helm/new-chart') {
+                            sh "helm dependency update"
+                            sh "helm upgrade --install my-app . --namespace apps --set image.tag=${params.VERSION}"
+                        }
                     }
                 }
             }
