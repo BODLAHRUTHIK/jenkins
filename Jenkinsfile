@@ -127,10 +127,13 @@ pipeline {
                 script {
                     withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         // Print AWS CLI version to ensure it's installed correctly
-
+                        sh 'rm ~/.aws/cli/cache/*.json'
                         echo "Its inside"
                         sh 'aws --version'
-                        sh 'aws sts get-caller-identity'
+                        retry(2) {
+                            sh 'aws sts get-caller-identity'
+                        }
+                        
 
 
                         // Update kubeconfig for the EKS cluster
