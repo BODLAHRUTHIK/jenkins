@@ -40,23 +40,7 @@ pipeline {
         }
 
 
-        stage('Install Tools') {
-            steps {
-                script {
-                    // Install kubectl if not already installed
-                    if (!commandExists('kubectl')) {
-                        sh '''
-                        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-                        chmod +x kubectl
-                        mv kubectl ~/bin/kubectl
-                        '''
-                        sh 'kubectl version --client' // Verify installation
-                    }
-
-                    // Proceed with other tool installations like Helm
-                }
-            }
-        }
+        
 
 
         stage('Download and Install Helm') {
@@ -67,6 +51,24 @@ pipeline {
                     sh 'tar -zxvf helm-v3.15.2-linux-amd64.tar.gz'
                     sh 'mv linux-amd64/helm ~/bin/helm'  // Assuming ~/bin is in PATH
                     sh 'helm version'  // Verify installation
+                }
+            }
+        }
+
+        stage('Install Tools') {
+            steps {
+                script {
+                    // Install kubectl if not already installed
+                    if (!commandExists('kubectl')) {
+                        sh '''
+                        curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+                        chmod +x kubectl
+                        mv kubectl /var/jenkins_home/bin/kubectl
+                        '''
+                        sh 'kubectl version --client' // Verify installation
+                    }
+
+                    // Proceed with other tool installations like Helm
                 }
             }
         }
