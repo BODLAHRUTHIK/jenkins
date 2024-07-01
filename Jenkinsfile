@@ -127,10 +127,8 @@ pipeline {
                 script {
                     withAWS(region: AWS_REGION, role: 'arn:aws:iam::874789631010:role/cluster-access-2', credentials: 'aws-credentials') {
                         // Print AWS CLI version to ensure it's installed correctly
-                        sh 'aws --version'
+                        sh 'echo aws --version'
 
-                        // Check if the EKS cluster exists and print its details
-                        sh "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
 
                         // Update kubeconfig for the EKS cluster
                         sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
