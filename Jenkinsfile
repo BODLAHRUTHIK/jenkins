@@ -117,7 +117,7 @@ pipeline {
                 echo 'Cloning Helm chart repository...'
                 script {
                     sh 'rm -rf my-flask-helm' // Clean up any previous clone
-                    sh "git clone ${HELM_CHART_REPO_URL}"
+                    sh "git clone ${HELM_CHART_REPO}"
                 }
             }
         }
