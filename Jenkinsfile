@@ -125,10 +125,13 @@ pipeline {
         stage('Configure Kubernetes') {
             steps {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
+                
+                sh 'unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN'
                 script {
                     withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         // Print AWS CLI version to ensure it's installed correctly
                         echo "Its inside"
+                        
                         sh 'aws --version'
                         sh 'env | grep AWS'
 
