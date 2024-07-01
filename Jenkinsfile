@@ -125,18 +125,15 @@ pipeline {
             steps {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
-                        // If using IAM role support
-                        withIAMRole(role: 'arn:aws:iam::874789631010:role/cluster-access-2', duration: 3600) {
-                            // Print AWS CLI version to ensure it's installed correctly
-                            sh 'aws --version'
+                    withAWS(region: AWS_REGION, role: 'arn:aws:iam::874789631010:role/cluster-access-2', credentials: 'aws-credentials') {
+                        // Print AWS CLI version to ensure it's installed correctly
+                        sh 'aws --version'
 
-                            // Check if the EKS cluster exists and print its details
-                            sh "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                        // Check if the EKS cluster exists and print its details
+                        sh "aws eks describe-cluster --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
 
-                            // Update kubeconfig for the EKS cluster
-                            sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
-                        }
+                        // Update kubeconfig for the EKS cluster
+                        sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     }
                 }
             }
@@ -145,7 +142,7 @@ pipeline {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
+                    withAWS(region: AWS_REGION, role: 'arn:aws:iam::874789631010:role/cluster-access-2', credentials: 'aws-credentials') {
                         dir('my-flask-helm/new-chart') {
                             sh "helm dependency update"
                             sh "helm upgrade --install my-app . --namespace apps --set image.tag=${params.VERSION}"
