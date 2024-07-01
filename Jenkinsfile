@@ -122,15 +122,28 @@ pipeline {
                 }
             }
         }
-
         stage('Configure AWS Credentials') {
             steps {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-                    sh 'aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}'
                     sh 'aws configure list'  // Verify AWS CLI configuration
                 }
             }
         }
+
+        stage('Fetch Kubeconfig') {
+            steps {
+                script {
+                    def result = sh(
+                        script: "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --debug",
+                        returnStatus: true
+                    )
+                    if (result != 0) {
+                        error "Failed to update kubeconfig. Exit code: ${result}"
+                    }
+                }
+            }
+        }
+
 
         
         stage('Deploy') {
