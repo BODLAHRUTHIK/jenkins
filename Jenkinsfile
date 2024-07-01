@@ -125,8 +125,10 @@ pipeline {
             steps {
                 echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, role: 'arn:aws:iam::874789631010:role/cluster-access-2', credentials: 'aws-credentials') {
+                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         // Print AWS CLI version to ensure it's installed correctly
+
+                        echo "Its inside"
                         sh 'echo aws --version'
 
 
@@ -140,7 +142,7 @@ pipeline {
             steps {
                 echo "Deploying the application to EKS cluster ${EKS_CLUSTER_NAME}"
                 script {
-                    withAWS(region: AWS_REGION, role: 'arn:aws:iam::874789631010:role/cluster-access-2', credentials: 'aws-credentials') {
+                    withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
                         dir('my-flask-helm/new-chart') {
                             sh "helm dependency update"
                             sh "helm upgrade --install my-app . --namespace apps --set image.tag=${params.VERSION}"
