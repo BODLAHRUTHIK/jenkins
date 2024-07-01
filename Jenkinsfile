@@ -20,9 +20,8 @@ pipeline {
         HELM_CHART_REPO = 'https://github.com/BODLAHRUTHIK/my-flask-helm.git'
         AWS_ACCOUNT_ID = '874789631010' // Ensure you have this value
         PATH = "/var/jenkins_home/bin:$PATH"
-        ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'  // Replace with your role ARN
-        SESSION_NAME = 'JenkinsSession'
-        
+        AWS_ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'
+        AWS_ROLE_SESSION_NAME = 'JenkinsSession'
     }
 
     stages {
@@ -123,32 +122,13 @@ pipeline {
                 }
             }
         }
-        stage('Configure AWS Credentials') {
+
+        stage('Assume Role') {
             steps {
-                withCredentials([awsAccessKeyId(credentialsId: 'aws-credentials', variable: 'AWS_ACCESS_KEY_ID'),
-                                 awsSecretAccessKey(credentialsId: 'aws-credentials', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-                    sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
-                    sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
+                withAWS(role: AWS_ROLE_ARN, roleSessionName: AWS_ROLE_SESSION_NAME, duration: 900) {
                     sh 'aws configure list'  // Verify AWS CLI configuration
                 }
             }
-        }
-        stage('Configure Kubernetes') {
-                steps {
-                    echo "Configuring Kubernetes context for EKS cluster ${EKS_CLUSTER_NAME}"
-                    script {
-                        withAWS(region: AWS_REGION, credentials: 'aws-credentials') {
-                            sh 'export AWS_ACCESS_KEY_ID=AKIA4XLMGOQROLFUFXEZ'
-                            sh 'AWS_SECRET_ACCESS_KEY=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'
-                            sh 'aws --version'
-                            sh 'env | grep AWS'
-                            retry(2) {
-                                sh 'aws sts get-caller-identity'
-                            }
-                            sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
-                        }
-                    }
-                }
         }
         
         stage('Deploy') {
