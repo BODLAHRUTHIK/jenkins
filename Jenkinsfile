@@ -136,9 +136,10 @@ pipeline {
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
-                    sh 'kubectl get pods -A'
+                    
                     sh 'cat /var/jenkins_home/.kube/config'
                     sh 'aws sts get-caller-identity'
+                    sh 'kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config'
                 }
             }
         }
