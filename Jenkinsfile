@@ -136,7 +136,6 @@ pipeline {
         stage('Fetch Kubeconfig-1') {
             steps {
 
-                sh 'aws configure list'
                 sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                 sh 'kubectl config get-contexts'
                 
