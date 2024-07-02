@@ -131,45 +131,6 @@ pipeline {
             }
         }
 
-        stage('Fetch Kubeconfig-1') {
-            steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
-                    script {
-                        // Assume Role and extract credentials
-                        def assumeRoleCommand = "aws sts assume-role --role-arn ${AWS_ROLE_ARN} --role-session-name jenkins-session --output json"
-                        def assumeRoleResult = sh(script: assumeRoleCommand, returnStdout: true).trim()
-                        def jsonResponse = readJSON text: assumeRoleResult
-
-                        env.AWS_ACCESS_KEY_ID = jsonResponse.Credentials.AccessKeyId
-                        env.AWS_SECRET_ACCESS_KEY = jsonResponse.Credentials.SecretAccessKey
-                        env.AWS_SESSION_TOKEN = jsonResponse.Credentials.SessionToken
-                    }
-                }
-                
-                script {
-                    withEnv(["AWS_ACCESS_KEY_ID=${env.AWS_ACCESS_KEY_ID}", "AWS_SECRET_ACCESS_KEY=${env.AWS_SECRET_ACCESS_KEY}", "AWS_SESSION_TOKEN=${env.AWS_SESSION_TOKEN}"]) {
-                        // Update kubeconfig for EKS
-                        sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
-
-                        // Check kubeconfig contexts
-                        sh 'kubectl config get-contexts'
-                        
-                        // Set correct permissions for kubeconfig file
-                        sh 'chmod 666 /var/jenkins_home/.kube/config'
-
-                        // Validate AWS credentials
-                        sh 'aws sts get-caller-identity'
-                        
-                        // Retrieve EKS token
-                        def tokenCommand = "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region=${AWS_REGION} --output text --query 'status.token'"
-                        def token = sh(script: tokenCommand, returnStdout: true).trim()
-
-                        // Use the token with kubectl
-                        sh "kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config --token=${token}"
-                    }
-                }
-            }
-        }
         stage('Fetch Kubeconfig') {
             steps {
 
