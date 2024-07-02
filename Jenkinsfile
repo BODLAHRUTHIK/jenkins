@@ -8,6 +8,7 @@ pipeline {
     tools {
         dockerTool 'docker'
     }
+    
     environment {
         GIT_REPO = 'https://github.com/BODLAHRUTHIK/hello-world-app.git'
         GIT_CREDENTIALS_ID = 'github-credentials'
