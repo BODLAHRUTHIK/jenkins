@@ -133,20 +133,7 @@ pipeline {
 
         stage('Fetch Kubeconfig') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-                    script {
-                        def assumeRoleCommand = "aws sts assume-role --role-arn ${AWS_ROLE_ARN} --role-session-name jenkins-session"
-                        def assumeRoleResult = sh(script: assumeRoleCommand, returnStdout: true).trim()
-                        
-                        def accessKeyId = assumeRoleResult.tokenize('\n').find { it.contains('AccessKeyId') }?.split(':')?.last()?.replaceAll('"', '')?.trim()
-                        def secretAccessKey = assumeRoleResult.tokenize('\n').find { it.contains('SecretAccessKey') }?.split(':')?.last()?.replaceAll('"', '')?.trim()
-                        def sessionToken = assumeRoleResult.tokenize('\n').find { it.contains('SessionToken') }?.split(':')?.last()?.replaceAll('"', '')?.trim()
-                        
-                        env.AWS_ACCESS_KEY_ID = accessKeyId
-                        env.AWS_SECRET_ACCESS_KEY = secretAccessKey
-                        env.AWS_SESSION_TOKEN = sessionToken
-                    }
-                }
+
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
