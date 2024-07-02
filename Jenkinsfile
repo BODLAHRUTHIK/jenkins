@@ -143,7 +143,6 @@ pipeline {
 
                 sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                 sh 'kubectl config get-contexts'
-                sh 'pwd'
                 sh 'ls'
                 sh 'cat /var/jenkins_home/.kube/config'
                 sh 'chmod 666 /var/jenkins_home/.kube/config'
