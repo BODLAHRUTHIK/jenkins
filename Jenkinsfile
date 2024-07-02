@@ -144,7 +144,7 @@ pipeline {
                     sh "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh '''
                             token=$(aws eks get-token --cluster-name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
-                            kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config  --token=$token
+                            kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config
                        '''
                 }
             }
