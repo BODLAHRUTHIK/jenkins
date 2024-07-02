@@ -138,21 +138,7 @@ pipeline {
             steps {
 
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-
-                    script {
-                        sh '''
-                        mkdir -p ~/.aws
-                        cat > ~/.aws/credentials <<EOL
-                        [default]
-                        aws_access_key_id = AKIA4XLMGOQROLFUFXEZ
-                        aws_secret_access_key = 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
-                        EOL
-                        '''
-                    }
-                    sh 'sudo chmod 600 /var/jenkins_home/.aws/credentials'
-                    sh 'sudo chown jenkins /var/jenkins_home/.aws/credentials'
-                    sh 'cat /var/jenkins_home/.aws/credentials'
-                    
+        
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
                     
