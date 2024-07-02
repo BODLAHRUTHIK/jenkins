@@ -132,7 +132,24 @@ pipeline {
             }
         }
 
+        stage('Fetch Kubeconfig-1') {
+            steps {
 
+                sh 'aws configure list'
+                sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                sh 'kubectl config get-contexts'
+                
+                sh 'cat /var/jenkins_home/.kube/config'
+                sh 'chmod 666 /var/jenkins_home/.kube/config'
+                sh 'aws sts get-caller-identity'
+                sh "aws eks get-token --cluster-name=${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                sh '''
+                        token=$(aws eks get-token --cluster-name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
+                        kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config
+                   '''
+
+            }
+        }
 
         stage('Fetch Kubeconfig') {
             steps {
