@@ -22,6 +22,7 @@ pipeline {
         AWS_ROLE_ARN = 'arn:aws:iam::874789631010:role/cluster-access-2'
         AWS_ROLE_SESSION_NAME = 'JenkinsSession'
         PATH = "/var/jenkins_home/bin:$PATH"
+        AWS_CREDENTIALS_FILE = "${WORKSPACE}/.aws/credentials"
     }
 
     stages {
@@ -131,10 +132,29 @@ pipeline {
             }
         }
 
+        stage('Replace AWS Credentials') {
+            steps {
+                withCredentials([aws(credentialsId: aws-credentials, accessKeyVariable: 'AWS_ACCESS_KEY_ID', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                    
+                }
+            }
+        }
+
         stage('Fetch Kubeconfig') {
             steps {
 
                 withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
+
+                    script {
+                        sh '''
+                        mkdir -p ~/.aws
+                        cat > ~/.aws/credentials <<EOL
+                        [default]
+                        aws_access_key_id = AKIA4XLMGOQROLFUFXEZ
+                        aws_secret_access_key = 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
+                        EOL
+                        '''
+                    }
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
                     
