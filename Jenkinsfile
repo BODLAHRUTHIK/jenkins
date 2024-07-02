@@ -147,27 +147,16 @@ pipeline {
                         token=$(aws eks get-token --cluster-name ${EKS_CLUSTER_NAME} --region ${AWS_REGION} --output text --query 'status.token')
                         kubectl get pods --all-namespaces --kubeconfig=/var/jenkins_home/.kube/config
                    '''
-
-            }
-        }
-
-
-
-
-        
-        stage('Deploy') {
-            steps {
                 script {
-                    withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
-                        dir('my-flask-helm/new-chart') {
+                    dir('my-flask-helm/new-chart') {
                             sh "helm dependency update"
                             sh "helm upgrade --install my-app . --namespace apps --set image.tag=${params.VERSION}"
                         }
-                    }
                 }
+
             }
-           
         }
+
     }
 }
 
