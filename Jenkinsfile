@@ -149,6 +149,10 @@ pipeline {
                         EOL
                         '''
                     }
+                    sh 'sudo chmod 600 /var/jenkins_home/.aws/credentials'
+                    sh 'sudo chown jenkins /var/jenkins_home/.aws/credentials'
+                    sh 'cat /var/jenkins_home/.aws/credentials'
+                    
                     sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
                     sh 'kubectl config get-contexts'
                     
