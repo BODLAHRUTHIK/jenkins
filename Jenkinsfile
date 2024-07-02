@@ -133,7 +133,7 @@ pipeline {
 
         stage('Fetch Kubeconfig') {
             steps {
-                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials-id']]) {
+                withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', credentialsId: 'aws-credentials']]) {
                     script {
                         def assumeRoleCommand = "aws sts assume-role --role-arn ${AWS_ROLE_ARN} --role-session-name jenkins-session"
                         def assumeRoleResult = sh(script: assumeRoleCommand, returnStdout: true).trim()
