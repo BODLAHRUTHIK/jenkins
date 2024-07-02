@@ -142,6 +142,7 @@ pipeline {
             steps {
 
                 sh "aws eks update-kubeconfig --name ${EKS_CLUSTER_NAME} --region ${AWS_REGION}"
+                sh 'ls'
                 sh 'kubectl config get-contexts'
                 sh 'pwd'
                 sh 'cat /var/jenkins_home/.kube/config'
